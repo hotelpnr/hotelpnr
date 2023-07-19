@@ -211,3 +211,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+const apiKey = 'AIzaSyBPqmEE88DACBn7Yl5aXWMRq_yjgkIpkGw';
+const placeId = 'ChIJY5589vm9qDsRuoksNGsyZ7I';
+
+fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,reviews&key=${apiKey}`)
+  .then(response => response.json())
+  .then(data => {
+    const reviews = data.result.reviews;
+    const reviewsDiv = document.getElementById('reviews');
+
+    reviews.forEach(review => {
+      const reviewDiv = document.createElement('div');
+
+      const nameElement = document.createElement('p');
+      nameElement.textContent = review.author_name;
+      reviewDiv.appendChild(nameElement);
+
+      if (review.profile_photo_url) {
+        const imageElement = document.createElement('img');
+        imageElement.src = review.profile_photo_url;
+        imageElement.alt = review.author_name;
+        reviewDiv.appendChild(imageElement);
+      }
+
+      const ratingElement = document.createElement('p');
+      ratingElement.textContent = `Rating: ${review.rating} stars`;
+      reviewDiv.appendChild(ratingElement);
+
+      const reviewContentElement = document.createElement('p');
+      reviewContentElement.textContent = review.text;
+      reviewDiv.appendChild(reviewContentElement);
+
+      reviewsDiv.appendChild(reviewDiv);
+    });
+  })
+  .catch(error => {
+    console.error('Error fetching reviews:', error);
+  });
